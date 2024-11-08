@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLi Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+        }
+        #progress-bar-filled {
+            height: 30px;
+            width: 0%;
+            background-color: #4caf50;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>SQL Injection Scanner</h1>
+    
+    <form action="/" method="POST">
+        <label for="url">Enter the URL:</label>
+        <input type="text" name="url" id="url" placeholder="http://example.com" required>
+        <button type="submit">Start Scan</button>
+    </form>
+
+    <div id="progress-bar">
+        <div id="progress-bar-filled">0%</div>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        const progressElement = document.getElementById("progress-bar-filled");
+
+        // Establish a connection to the server for progress updates
+        const eventSource = new EventSource("/progress");
+
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.progress !== undefined) {
+                progressElement.style.width = data.progress + '%';
+                progressElement.innerText = `${Math.round(data.progress)}%`;
+            }
+
+            if (data.scan_complete) {
+                eventSource.close();
+                alert("Scan complete!");
+            }
+        };
+    </script>
+</body>
+</html>
