@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 # Load OpenAI API Key from a file
 def load_openai_key():
-    with open('..openai_secret', 'r') as f:
+    with open('../..openai_secret', 'r') as f:
         return f.read().strip()
 
 # Set OpenAI API Key
